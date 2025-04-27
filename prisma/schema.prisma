@@ -1,0 +1,191 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  STUDENT
+}
+
+enum ClassStanding {
+  FRESHMAN
+  SOPHOMORE
+  JUNIOR
+  SENIOR
+  GRADUATE
+}
+
+enum CourseStatus {
+  IN_PROGRESS
+  COMPLETED
+  PLANNED
+}
+
+enum DayOfWeek {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+  SUNDAY
+}
+
+type CourseScheduleEntry {
+  courseCode String
+  courseName String
+  semester   String       // e.g., "Fall 2024"
+  status     CourseStatus
+  grade      String?      // e.g., "A", "B+", "P"
+}
+
+type CourseTakenEntry {
+  courseCode  String
+  courseName  String
+  semester    String    // e.g., "Spring 2023"
+  grade       String    // e.g., "A-", "C", "S"
+  creditHours Int
+}
+
+model User {
+  id                String            @id @default(auto()) @map("_id") @db.ObjectId
+  role              Role              @default(STUDENT)
+  name              String
+  email             String            @unique
+  password          String?           // Make password optional
+  phone             String?
+  mobile            String?
+  address           String?
+  city              String?
+  zipcode           String?
+  studentId         String?           // Optional ID Number like 453926
+  major             String            @default("Undeclared") // Default major
+  minor             String?
+  classStanding     ClassStanding     @default(FRESHMAN)  // Default class standing
+  degreeCatalogYear String            @default("0000")    // Default catalog year (placeholder)
+  gpa               Float             @default(0.0)       // Default GPA
+  lastTermGpa       Float             @default(0.0)       // Default last term GPA
+  academicStanding  String?
+  academicHonors    String?
+  honorsProgram     Boolean           @default(false)
+  holdsAndWarnings  String?
+  advisor           String?
+  auditFile         String            @default("")         // Default empty audit file path/URL
+  courseSchedule    CourseScheduleEntry[] // Should be required, but can be empty
+  coursesTaken      CourseTakenEntry[]    // Should be required, but can be empty
+  
+  // Add relations back for NextAuth
+  accounts      Account[]
+  sessions      Session[]
+  profile       Profile?
+  emailVerified DateTime? // Needed for some providers
+  image         String?   // Needed for some providers
+  imageURL      String?   // Optional field for Google image URL
+
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  // Admin created content
+  notificationsCreated Notification[]    @relation("CreatedNotifications")
+  eventsCreated        Event[]           @relation("CreatedEvents")
+  shuttleSchedulesUpdated ShuttleSchedule[] @relation("UpdatedSchedules")
+}
+
+model Account {
+  id                String  @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String  @db.ObjectId
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.String
+  access_token      String? @db.String
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.String
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  sessionToken String   @unique
+  userId       String   @db.ObjectId
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Profile {
+  id       String  @id @default(auto()) @map("_id") @db.ObjectId
+  userId   String  @unique @db.ObjectId
+  bio      String?
+  website  String?
+  location String?
+  user     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  title     String
+  message   String
+  createdAt DateTime  @default(now())
+  expiresAt DateTime? // Optional expiry date
+
+  createdBy User      @relation("CreatedNotifications", fields: [userId], references: [id])
+  userId    String    @db.ObjectId // ID of the admin user who created it
+}
+
+model Event {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String?
+  date        DateTime
+  location    String?
+  imageUrl    String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  createdById String    @db.ObjectId
+  createdBy   User      @relation("CreatedEvents", fields: [createdById], references: [id])
+
+  @@index([createdById])
+}
+
+model ShuttleSchedule {
+  id           String    @id @default(auto()) @map("_id") @db.ObjectId
+  // dayOfWeek    DayOfWeek @unique // REMOVED
+  date         DateTime  @unique // Which specific date this schedule applies to
+  notes        String?   
+  scheduleData Json      
+  updatedAt    DateTime  @updatedAt
+
+  updatedBy    User      @relation("UpdatedSchedules", fields: [userId], references: [id])
+  userId       String    @db.ObjectId 
+}
+
+// Remove DayOfWeek enum if no longer needed elsewhere
+// enum DayOfWeek {
+//   MONDAY
+//   TUESDAY
+//   WEDNESDAY
+//   THURSDAY
+//   FRIDAY
+//   SATURDAY
+//   SUNDAY
+// } 
