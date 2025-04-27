@@ -29,18 +29,18 @@ export default function CollegeLifePage() {
                     
                     <div className="life-buttons">
                         {/* Link to internal Events page - Updated */}
-                        <Link href="/events" className="life-btn">
+                        <button onClick={() => window.location.href="/events"} className="life-btn">
                             <i className="fas fa-calendar-alt"></i>
                             Events
                             <span className="life-description">Get Involved on Campus</span>
-                        </Link>
+                        </button>
                         
                         {/* Link to internal Shuttle page - Updated */} 
-                        <Link href="/shuttle" className="life-btn">
+                        <button onClick={() => window.location.href="/shuttle"} className="life-btn">
                             <i className="fas fa-bus"></i> {/* Changed icon */} 
                             Cougar Express
                             <span className="life-description">Plan your ride</span>
-                        </Link>
+                        </button>
 
                         {/* Potential future buttons */} 
                         {/* <button className="life-btn">

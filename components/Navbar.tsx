@@ -161,7 +161,7 @@ export function Navbar() {
                     padding: 10px 30px; /* Increased padding */
                     background-color: #c40000; /* Match theme */
                     color: white;
-                    height: 80px; /* Match theme */
+                    height: 100px; /* Match theme */
                     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
                 }
 
@@ -179,6 +179,7 @@ export function Navbar() {
                 .nav-links {
                     display: flex;
                     gap: 30px;
+                    font-size: 20px;
                 }
 
                 .nav-links a {

@@ -49,11 +49,11 @@ export default function AcademiaPage() {
                     
                     <div className="academic-buttons">
                         {/* Link to internal page - Updated Structure */}
-                        <Link href="/academia/course-suggestion" className="academic-btn">
+                        <button onClick={() => window.location.href="/academia/course-suggestion"} className="academic-btn">
                             <i className="fas fa-book-open"></i>
                             Course Suggestions
                             <span className="academic-description">Get personalized course recommendations</span>
-                        </Link>
+                        </button>
                         
                         {/* Link to external site */}
                         <button className="academic-btn" onClick={() => window.open('https://meet.google.com/', '_blank')}>
@@ -63,12 +63,12 @@ export default function AcademiaPage() {
                         </button>
                         
                          {/* Link to internal page - Updated Structure */}
-                        <Link href="/weekly-schedule" className="academic-btn"> 
+                        <button onClick={() => window.location.href="/weekly-schedule"} className="academic-btn"> 
                             {/* Assuming route exists */}
                             <i className="fas fa-calendar-alt"></i>
                             Weekly Schedule
                             <span className="academic-description">View and manage your class schedule</span>
-                        </Link>
+                        </button>
                         
                         {/* Link to external site */}
                         <button className="academic-btn" onClick={() => window.open('https://caldwell.blackboard.com/', '_blank')}>

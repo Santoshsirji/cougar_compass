@@ -32,25 +32,25 @@ export default function CareerPage() {
                         </button>
                         
                         {/* Example Button 2: Link to internal resource page */} 
-                        <Link href="/career/resources" className="career-btn"> {/* Assuming route exists */} 
+                        <button onClick={() => window.location.href="/career/resources"} className="career-btn"> {/* Assuming route exists */} 
                             <i className="fas fa-file-alt"></i>
                             Resume & Cover Letter Help
                             <span className="career-description">Access guides and templates</span>
-                        </Link>
+                        </button>
 
                         {/* Example Button 3: Link to contact/scheduling */}
-                        <Link href="/career/advising" className="career-btn"> {/* Assuming route exists */} 
+                        <button onClick={() => window.location.href="/career/advising"} className="career-btn"> {/* Assuming route exists */} 
                             <i className="fas fa-comments"></i>
                             Career Advising
                             <span className="career-description">Connect with a career counselor</span>
-                        </Link>
+                        </button>
                         
                         {/* Example Button 4: Link to events */}
-                        <Link href="/events?category=career" className="career-btn"> {/* Optional query param */} 
+                        <button onClick={() => window.location.href="/weekly-schedule"} className="career-btn"> {/* Optional query param */} 
                             <i className="fas fa-calendar-check"></i>
                             Networking Events
                             <span className="career-description">Attend workshops and fairs</span>
-                        </Link>
+                        </button>
                     </div>
                 </div>
             </div>
