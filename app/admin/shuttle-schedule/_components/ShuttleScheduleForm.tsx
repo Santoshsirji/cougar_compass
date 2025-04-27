@@ -83,7 +83,7 @@ export function ShuttleScheduleForm({ initialData, onSubmitSuccess }: ShuttleSch
         defaultValues: initialData ? {
             date: initialData.date ? new Date(initialData.date) : undefined,
             notes: initialData.notes ?? '',
-            scheduleData: formatDataForForm(initialData.scheduleData),
+            scheduleData: formatDataForForm(initialData.scheduleData as ScheduleDataType | null | undefined),
         } : {
             date: undefined,
             notes: '',
@@ -105,7 +105,7 @@ export function ShuttleScheduleForm({ initialData, onSubmitSuccess }: ShuttleSch
             form.reset({
                 date: resetDate,
                 notes: initialData.notes ?? '',
-                scheduleData: formatDataForForm(initialData?.scheduleData),
+                scheduleData: formatDataForForm(initialData?.scheduleData as ScheduleDataType | null | undefined),
             });
         } else {
              form.reset({
