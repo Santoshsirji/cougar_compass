@@ -56,7 +56,6 @@ const updateProfileSchema = z.object({
   honorsProgram: z.boolean().optional(),
   holdsAndWarnings: z.string().optional().or(z.literal('')), // Added Holds/Warnings
   advisor: z.string().optional().or(z.literal('')),
-  auditFile: z.string().optional().or(z.literal('')), // URL or path
   courseSchedule: z.array(courseScheduleEntrySchema).optional(), // Added Course Schedule
   coursesTaken: z.array(courseTakenEntrySchema).optional(), // Added Courses Taken
 });
@@ -103,7 +102,6 @@ export async function updateUserProfile(data: UpdateProfileInput): Promise<{ suc
         classStanding: updateData.classStanding,
         honorsProgram: updateData.honorsProgram,
         advisor: updateData.advisor || undefined,
-        auditFile: updateData.auditFile || undefined,
         gpa: updateData.gpa,
         lastTermGpa: updateData.lastTermGpa,
         academicStanding: updateData.academicStanding || undefined,
