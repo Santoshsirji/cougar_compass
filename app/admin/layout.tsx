@@ -3,7 +3,7 @@ import { ReactNode } from 'react';
 import { Home, Bell, CalendarDays, Bus, LogOut } from 'lucide-react'; // Icons for nav and LogOut icon
 // import SignOutButton from '@/components/SignOutButton'; // Assuming you have this - Temporarily removed
 import { getServerSession } from 'next-auth';
-import { authOptions } from '../api/auth/[...nextauth]/route';
+import { authOptions } from '@/lib/auth';
 import { Button } from '@/components/ui/button'; // Import Button for placeholder
 
 // Simple Sidebar Navigation component
