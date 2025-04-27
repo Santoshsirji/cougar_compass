@@ -1,7 +1,8 @@
 'use server';
 
-import { writeFile, mkdir } from 'fs/promises';
-import path from 'path';
+// Remove fs/promises and path imports as we no longer write to disk
+// import { writeFile, mkdir } from 'fs/promises';
+// import path from 'path';
 import { z } from "zod";
 import { db } from "@/lib/db";
 import { getServerSession } from "next-auth";
@@ -25,7 +26,7 @@ const uploadSchema = z.object({
   auditFile: fileSchema,
 });
 
-export async function uploadAuditFile(formData: FormData): Promise<{ success: boolean; message: string, filePath?: string } > {
+export async function uploadAuditFile(formData: FormData): Promise<{ success: boolean; message: string } > {
     try {
         const session = await getServerSession(authOptions);
         if (!session || !session.user?.id) {
@@ -48,44 +49,26 @@ export async function uploadAuditFile(formData: FormData): Promise<{ success: bo
 
         const validatedFile = validation.data.auditFile;
 
-        // Create a unique filename (e.g., userId-timestamp.pdf)
-        const uniqueSuffix = `${userId}-${Date.now()}`;
-        const fileExtension = path.extname(validatedFile.name);
-        const uniqueFilename = `${uniqueSuffix}${fileExtension}`;
-
-        // Define upload directory (within /public for accessibility)
-        const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'audits');
-        const relativeFilePath = `/uploads/audits/${uniqueFilename}`; // Path to store in DB
-        const absoluteFilePath = path.join(uploadDir, uniqueFilename);
-
-        // Ensure upload directory exists
-        await mkdir(uploadDir, { recursive: true });
-
-        // Read file buffer and write to disk
+        // Read file into a Buffer
         const buffer = Buffer.from(await validatedFile.arrayBuffer());
-        await writeFile(absoluteFilePath, buffer);
 
-        console.log(`File saved to: ${absoluteFilePath}`);
-        console.log(`Updating user ${userId} with audit file path: ${relativeFilePath}`);
+        console.log(`Updating user ${userId} with audit file data (size: ${buffer.length} bytes)`);
 
-        // Update user record in database
         await db.user.update({
             where: { id: userId },
-            data: { auditFile: relativeFilePath },
+            data: { 
+                auditFileData: buffer, 
+            },
         });
 
         // Revalidate the profile path to show the updated info
         revalidatePath('/profile');
         revalidatePath('/profile/edit'); // Revalidate edit page too
 
-        return { success: true, message: "Audit file uploaded successfully!", filePath: relativeFilePath };
+        return { success: true, message: "Audit file uploaded successfully!" };
 
     } catch (error: any) {
         console.error("Error uploading audit file:", error);
-        // Provide a more specific error message if possible
-        if (error.code === 'ENOENT') { // Example: Handling directory creation errors
-             return { success: false, message: "Server error: Could not create upload directory." };
-        }
         return { success: false, message: "Database error: Failed to upload file." };
     }
 } 

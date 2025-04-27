@@ -6,7 +6,8 @@ import Image from 'next/image'; // Use Next.js Image for optimization
 import { useSession, signOut } from 'next-auth/react'; // Hook to get session data and signOut
 import { getNotifications } from '@/app/actions/getNotifications'; // Import the action
 import type { Notification } from '@prisma/client'; // Import the Notification type
-import { Loader2, LogOut, User } from 'lucide-react'; // For loading state and icons
+import { Loader2, LogOut, User, Bell } from 'lucide-react'; // Keep existing icons if used, add Bell
+import { IoNotificationsOutline } from "react-icons/io5"; // Import react-icon
 import { formatDistanceToNow } from 'date-fns'; // For relative time
 import {
     DropdownMenu,
@@ -67,18 +68,19 @@ export function Navbar() {
                 </div>
                 <div className="nav-right">
                     <nav className="nav-links">
-                        {/* TODO: Add active class logic if needed based on current route */}
+                        {/* Conditionally render Dashboard link */}
+                        {status === 'authenticated' && (
+                            <Link href="/dashboard">Dashboard</Link>
+                        )}
+                        {/* Existing Links */}
                         <Link href="/academia">Academia</Link>
-                        <Link href="/collegelife">College Life</Link> {/* Assuming route exists */} 
-                        <Link href="/career">Career</Link> {/* Assuming route exists */} 
+                        <Link href="/collegelife">College Life</Link> {/* Assuming route exists */}
+                        <Link href="/career">Career</Link> {/* Assuming route exists */}
                     </nav>
                     <div className="profile-icons">
                         <div className="notification-wrapper" onClick={toggleSidebar}>
                             <button className="notificationbtn" title="Notifications">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-                                  <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-                                </svg>
+                                <IoNotificationsOutline size={28} color="white" />
                             </button>
                             {/* Update badge based on fetched count */}
                             {status === 'authenticated' && notificationCount > 0 && (
@@ -150,6 +152,7 @@ export function Navbar() {
                  )}
             </div>
             {/* Overlay for closing sidebar */}
+            
             {isSidebarOpen && <div id="overlay" onClick={toggleSidebar}></div>}
 
             {/* CSS Styles */}

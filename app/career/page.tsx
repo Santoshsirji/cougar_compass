@@ -31,22 +31,25 @@ export default function CareerPage() {
                             <span className="career-description">Find opportunities on Handshake</span>
                         </button>
                         
-                        {/* Example Button 2: Link to internal resource page */} 
-                        <Link href="/career/resources" className="career-btn"> {/* Assuming route exists */} 
+                        {/* Example Button 2: Link to internal resource page */}
+                        {/* Change href to the direct PDF link */}
+                        <Link href="https://www.caldwell.edu/wp-content/uploads/2023/05/New-Graduate-Guide.pdf" target="_blank" rel="noopener noreferrer" className="career-btn"> {/* Added target and rel for external PDF */}
                             <i className="fas fa-file-alt"></i>
                             Resume & Cover Letter Help
                             <span className="career-description">Access guides and templates</span>
                         </Link>
 
                         {/* Example Button 3: Link to contact/scheduling */}
-                        <Link href="/career/advising" className="career-btn"> {/* Assuming route exists */} 
+                         {/* Change href to the Alumni Career Resources link */}
+                         <Link href="https://www.caldwell.edu/alumni/alumni-career-resources/#:~:text=Call%20973%2D618%2D3290%20or,Follow%20us%20on%20Instagram%20%40careers_cu" target="_blank" rel="noopener noreferrer" className="career-btn"> {/* Added target and rel for external link */} 
                             <i className="fas fa-comments"></i>
                             Career Advising
                             <span className="career-description">Connect with a career counselor</span>
                         </Link>
                         
                         {/* Example Button 4: Link to events */}
-                        <Link href="/events?category=career" className="career-btn"> {/* Optional query param */} 
+                         {/* Change href to the Conference Services link */}
+                         <Link href="https://www.caldwell.edu/conference-services/" target="_blank" rel="noopener noreferrer" className="career-btn"> {/* Added target and rel for external link */} 
                             <i className="fas fa-calendar-check"></i>
                             Networking Events
                             <span className="career-description">Attend workshops and fairs</span>

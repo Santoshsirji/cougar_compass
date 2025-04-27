@@ -7,6 +7,7 @@ import { Prisma } from '@prisma/client';
 
 // Define the type for the user profile data we want to return
 // Exclude sensitive fields like password
+// Include auditFileData (Bytes) and remove auditFile (String)
 export type UserProfileData = Prisma.UserGetPayload<{
   select: {
     id: true,
@@ -30,7 +31,7 @@ export type UserProfileData = Prisma.UserGetPayload<{
     honorsProgram: true,
     holdsAndWarnings: true,
     advisor: true,
-    auditFile: true,
+    auditFileData: true,
     courseSchedule: true,
     coursesTaken: true,
     image: true,
@@ -72,7 +73,7 @@ export async function getUserProfile(): Promise<UserProfileData | null> {
         honorsProgram: true,
         holdsAndWarnings: true,
         advisor: true,
-        auditFile: true,
+        auditFileData: true,
         courseSchedule: true,
         coursesTaken: true,
         image: true,

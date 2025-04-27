@@ -2,52 +2,19 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { getRecentEventsForTicker, RecentEventTickerItem } from '@/app/actions/getRecentEventsForTicker'; // Import action and type
-import { GraduationCap, CalendarDays, Briefcase } from 'lucide-react'; // Import icons for features
+import { GraduationCap, CalendarDays, Briefcase } from 'lucide-react'; 
 
 export default function HomePage() {
     const messages = ["For a Cool College-Life", "Your Everyday Assistant", "Welcome to Coop!"];
     const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
 
-    // State for ticker
-    const [tickerItems, setTickerItems] = useState<RecentEventTickerItem[]>([]);
-    const [isLoadingTicker, setIsLoadingTicker] = useState(true);
-    const [tickerError, setTickerError] = useState<string | null>(null);
-
     useEffect(() => {
         const intervalId = setInterval(() => {
             setCurrentMessageIndex((prevIndex) => (prevIndex + 1) % messages.length);
-        }, 5000); // Change message every 5 seconds
-
+        }, 5000); 
         // Cleanup function to clear the interval when the component unmounts
         return () => clearInterval(intervalId);
     }, [messages.length]); // Re-run effect if messages array length changes
-
-    // Effect for fetching ticker data
-    useEffect(() => {
-        setIsLoadingTicker(true);
-        setTickerError(null);
-        getRecentEventsForTicker(5) // Fetch latest 5 event titles
-            .then(data => {
-                setTickerItems(data);
-            })
-            .catch(err => {
-                console.error("Failed to fetch ticker events:", err);
-                setTickerError("Could not load latest news.");
-            })
-            .finally(() => {
-                setIsLoadingTicker(false);
-            });
-    }, []); // Run only once on mount
-
-    // Construct ticker text
-    const tickerText = isLoadingTicker 
-        ? "Loading latest news..."
-        : tickerError
-        ? tickerError
-        : tickerItems.length > 0
-        ? tickerItems.map(item => item.title).join(' || ') // Join titles with separator
-        : "No recent events to display.";
 
     return (
         <>
@@ -128,10 +95,6 @@ export default function HomePage() {
                     </Link>
                 </div>
             </section>
-
-            <div className="ticker">
-                <div className="text">{tickerText}</div>
-            </div>
 
             {/* Scoped CSS using styled-jsx */}
             <style jsx>{`
@@ -264,29 +227,38 @@ export default function HomePage() {
                 }
 
                 /* News Ticker */
-                .ticker {
-                    background: black;
-                    color: white;
-                    overflow: hidden;
-                    white-space: nowrap;
-                    position: fixed;
+                /* .ticker {
+                    position: fixed; 
                     bottom: 0;
-                    left: 0; /* Ensure it starts from left edge */
+                    left: 0;
                     width: 100%;
-                    height: 50px;
-                    line-height: 50px; /* Vertically center text */
-                    padding: 0; /* Remove padding */
+                    background-color: #c40000; 
+                    color: white;
+                    padding: 10px 0;
+                    white-space: nowrap;
+                    overflow: hidden;
                     box-sizing: border-box;
-                    z-index: 500; /* Ensure it's above page content but below modals/sidebars */
+                    z-index: 1000;
+                    height: 50px;
+                    display: flex; 
+                    align-items: center; 
                 }
 
                 .ticker .text {
-                    font-family: 'Courier New', Courier, monospace;
-                    font-size: 20px; /* Slightly smaller ticker text */
                     display: inline-block;
-                    padding-left: 100%; /* Start off screen */
-                    animation: tickerMove 60s linear infinite; /* Adjust duration as needed */
+                    padding-left: 100%;
+                    animation: ticker-scroll 30s linear infinite;
+                    font-size: 16px;
                 }
+
+                @keyframes ticker-scroll {
+                    0% { transform: translateX(0); }
+                    100% { transform: translateX(-100%); }
+                }
+
+                .ticker:hover .text {
+                    animation-play-state: paused;
+                } */
 
                 .login {
                     text-align: center; /* Center the button */

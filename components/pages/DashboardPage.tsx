@@ -59,19 +59,19 @@ export default function DashboardPage() {
       description: 'Get personalized course recommendations',
     },
     {
-      href: '/dashboard/meeting_scheduler',
+      href: 'https://www.caldwell.edu/online/your-academic-advisor/',
       icon: 'fas fa-calendar-check',
       title: 'Meeting Setup',
       description: 'Schedule appointments with advisors',
     },
     {
-      href: '/dashboard/weekly_schedule',
+      href: '/weekly-schedule',
       icon: 'fas fa-calendar-alt',
       title: 'Weekly Schedule',
       description: 'View and manage your class schedule',
     },
     {
-      externalLink: 'https://blackboard.example.com',
+      externalLink: 'https://caldwell.blackboard.com/',
       icon: 'fas fa-university',
       title: 'Blackboard Access',
       description: 'Go to your learning portal',
@@ -80,39 +80,6 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen flex flex-col overflow-x-hidden font-sans">
-      {/* Navbar */}
-      <nav className="flex items-center justify-between bg-red-700 text-white px-6 md:px-10 h-20">
-        {/* Logo */}
-        <a href="/" className="flex items-center">
-          <Image src="/images/hack.png" alt="Cougar Hacks Logo" width={50} height={50} priority />
-        </a>
-
-        {/* Nav Menu */}
-        <div className="hidden md:flex gap-8">
-          {navItems.map((item) => (
-            <button
-              key={item}
-              onClick={() => setActiveItem(item)}
-              className={`px-4 py-2 rounded-md font-semibold transition ${
-                activeItem === item ? 'bg-white bg-opacity-30' : 'hover:bg-white hover:bg-opacity-20'
-              }`}
-            >
-              {item}
-            </button>
-          ))}
-        </div>
-
-        {/* Notifications */}
-        <div className="flex items-center gap-4">
-          <button
-            aria-label="Notifications"
-            className="p-2 rounded-full hover:bg-red-500 transition"
-          >
-            <Bell className="w-6 h-6" />
-          </button>
-        </div>
-      </nav>
-
       {/* Main Content */}
       <main className="flex flex-col md:flex-row h-[calc(100vh-80px)]">
         {/* Left Image Section */}

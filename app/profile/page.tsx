@@ -12,9 +12,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button"; // Import Button
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"; // Import Tabs
 import {
-  User, Clock, BookOpen, AlertTriangle, GraduationCap, Phone, Mail, MapPin, CalendarDays, Building, Star, Edit, FileText, Award, ShieldCheck, Users 
+  User, Clock, BookOpen, AlertTriangle, GraduationCap, Phone, Mail, MapPin, CalendarDays, Building, Star, Edit, FileText, Award, ShieldCheck, Users
 } from "lucide-react";
 import { getUserProfile, type UserProfileData } from "@/app/actions/getUserProfile"; // Import the action
+import { DayOfWeek } from '@prisma/client'; // Import DayOfWeek
 
 const getInitials = (name: string) => {
   const names = name.split(' ');
@@ -24,7 +25,7 @@ const getInitials = (name: string) => {
 
 // Helper component for info items
 const InfoItem = ({ icon: Icon, label, value }: { icon: React.ElementType, label?: string, value: React.ReactNode }) => (
-  <div className="flex items-start text-sm">
+  <div className={`flex items-start text-sm ${!value || value === "N/A" || value === "None" ? "opacity-60" : ""}`}>
     <Icon className="mr-3 h-4 w-4 flex-shrink-0 text-muted-foreground mt-0.5" />
     <div className="flex-1">
       {label && <span className="font-medium text-foreground">{label}: </span>}
@@ -32,6 +33,18 @@ const InfoItem = ({ icon: Icon, label, value }: { icon: React.ElementType, label
     </div>
   </div>
 );
+
+// Helper function to format time for display (if not already available)
+function formatDisplayTime(timeString: string | null | undefined): string {
+  if (!timeString) return '-';
+  if (/^\d{2}:\d{2}$/.test(timeString)) {
+    const [hours, minutes] = timeString.split(':').map(Number);
+    const period = hours >= 12 ? 'PM' : 'AM';
+    const adjustedHours = hours % 12 === 0 ? 12 : hours % 12;
+    return `${adjustedHours}:${minutes.toString().padStart(2, '0')} ${period}`;
+  }
+  return timeString;
+}
 
 export default async function ProfilePage() {
   const user = await getUserProfile(); // Call the server action
@@ -140,7 +153,7 @@ export default async function ProfilePage() {
                     </div>
                 </div>
                  {user.holdsAndWarnings && (
-                    <div className="col-span-2 mt-4 flex items-center justify-center text-destructive bg-destructive/10 p-3 rounded-md border border-destructive/20">
+                   <div className="mt-4 flex items-center text-destructive bg-destructive/10 p-3 rounded-md border border-destructive/20">
                       <AlertTriangle className="mr-2 h-5 w-5 flex-shrink-0" />
                       <span className="font-medium text-sm">{user.holdsAndWarnings}</span>
                     </div>
@@ -166,14 +179,31 @@ export default async function ProfilePage() {
                       {user.courseSchedule.length === 0 ? (
                         <p className="text-muted-foreground text-sm italic text-center py-4">No courses scheduled.</p>
                       ) : (
-                        <ul className="space-y-3">
+                        <ul className="space-y-4">
                           {user.courseSchedule.map((course, index) => (
-                            <li key={index} className="flex items-center justify-between p-3 bg-muted/30 rounded-md border border-border/50">
-                              <div>
-                                <p className="font-medium text-foreground">{course.courseName} <span className="text-muted-foreground">({course.courseCode})</span></p>
-                                <p className="text-xs text-muted-foreground">{course.semester} • <span className="capitalize">{course.status.replace('_', ' ').toLowerCase()}</span></p>
+                            <li key={index} className="p-3 bg-muted/30 rounded-md border border-border/50">
+                              <div className="flex items-center justify-between mb-2">
+                                <div>
+                                   <p className="font-medium text-foreground">{course.courseName} <span className="text-muted-foreground">({course.courseCode})</span></p>
+                                   <p className="text-xs text-muted-foreground">{course.semester} • <span className="capitalize">{course.status.replace('_', ' ').toLowerCase()}</span></p>
+                                </div>
+                                {course.grade && <Badge variant="outline">{course.grade}</Badge>}
                               </div>
-                              {course.grade && <Badge variant="outline">{course.grade}</Badge>}
+                              {/* Display Occurrences */}
+                              {course.occurrences && course.occurrences.length > 0 && (
+                                <div className="mt-2 space-y-1 pl-4 border-l border-dashed border-border/80">
+                                  {course.occurrences.map((occ, occIndex) => (
+                                    <div key={occIndex} className="text-xs text-muted-foreground flex items-center gap-2">
+                                       <span className="font-medium capitalize w-16 flex-shrink-0">{occ.dayOfWeek.toLowerCase()}:</span>
+                                       <span>{formatDisplayTime(occ.startTime)} - {formatDisplayTime(occ.endTime)}</span>
+                                       {occ.location && <span className="ml-auto pl-2">📍 {occ.location}</span>}
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                              {(!course.occurrences || course.occurrences.length === 0) && (
+                                 <p className="text-xs text-muted-foreground italic pl-4 mt-1">No specific meeting times listed.</p>
+                              )}
                             </li>
                           ))}
                         </ul>
@@ -230,12 +260,12 @@ export default async function ProfilePage() {
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="text-center py-6">
-                        <Button asChild variant="secondary">
-                           <a href={user.auditFile || "#"} target="_blank" rel="noopener noreferrer" className={!user.auditFile ? "pointer-events-none opacity-50" : ""}>
+                         <Button asChild variant="secondary" disabled={!user.auditFileData}>
+                           <a href={"/api/user/audit-file"} target="_blank" rel="noopener noreferrer" >
                               View Latest Audit File
                            </a>
                         </Button>
-                        {!user.auditFile && <p className="text-xs text-muted-foreground mt-2">No audit file available.</p>} 
+                        {!user.auditFileData && <p className="text-xs text-muted-foreground mt-2">No audit file uploaded.</p>} 
                     </CardContent>
                   </Card>
               </TabsContent>
