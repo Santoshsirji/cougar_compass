@@ -2,7 +2,7 @@
 
 import { z } from 'zod';
 import { getServerSession } from 'next-auth'; // Import getServerSession
-import { authOptions } from '@/app/api/auth/[...nextauth]/route'; // Import authOptions
+import { authOptions } from '@/lib/auth'; // Updated import path
 import { db } from '@/lib/db'; // Assuming prisma client is exported from lib/db
 import { Role } from '@prisma/client'; // Import Role enum
 import { revalidatePath } from 'next/cache';
