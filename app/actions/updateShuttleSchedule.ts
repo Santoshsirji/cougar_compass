@@ -65,12 +65,18 @@ export async function updateShuttleSchedule(data: UpdateScheduleInput): Promise<
 
         return { success: true, message: `Schedule for ${date.toLocaleDateString('en-CA', { timeZone: 'UTC' })} updated successfully!` };
 
-    } catch (error: any) {
+    } catch (error: unknown) {
+        const dateString = data.date ? new Date(data.date).toLocaleDateString() : 'the selected date';
+        console.error(`Error updating shuttle schedule for ${dateString}:`, error);
+
+        let message = `Failed to update schedule for ${dateString}.`;
+
         if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
-           const originalDateString = data.date ? new Date(data.date).toLocaleDateString() : 'the selected date';
-           return { success: false, message: `Error: A schedule already exists for ${originalDateString}. Please edit the existing schedule.` };
+            message = `Error: A schedule already exists for ${dateString}. Please edit the existing schedule.`;
+        } else if (error instanceof Error) {
+            message = error.message;
         }
-        console.error(`Error updating shuttle schedule for ${data.date?.toLocaleDateString()}:`, error);
-        return { success: false, message: "Failed to update schedule." };
+        
+        return { success: false, message: message };
     }
 } 

@@ -61,13 +61,18 @@ export async function upsertShuttleSchedule(data: ShuttleFormValues): Promise<{ 
 
     return { success: true, message: `Schedule for ${date.toLocaleDateString()} saved successfully.` };
 
-  } catch (error: any) {
-    
-     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
-     
-        return { success: false, message: `Error: A schedule already exists for ${data.date.toLocaleDateString()}. Please edit the existing schedule.` };
+  } catch (error: unknown) {
+    const dateString = data.date ? data.date.toLocaleDateString() : 'the specified date';
+    console.error(`Error saving shuttle schedule for ${dateString}:`, error);
+
+    let message = `Failed to save schedule for ${dateString}.`;
+
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+        message = `Error: A schedule already exists for ${dateString}. Please edit the existing schedule.`;
+    } else if (error instanceof Error) {
+        message = error.message;
     }
-    console.error(`Error upserting shuttle schedule for ${data.date?.toLocaleDateString()}:`, error);
-    return { success: false, message: error.message || "Failed to save schedule. An unknown error occurred." };
+
+    return { success: false, message: message };
   }
 } 

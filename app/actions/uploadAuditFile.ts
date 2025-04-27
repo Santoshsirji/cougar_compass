@@ -8,6 +8,7 @@ import { db } from "@/lib/db";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { revalidatePath } from "next/cache";
+import { Role } from "@prisma/client";
 
 // Define validation schema for the file
 const fileSchema = z.instanceof(File).refine(
@@ -26,49 +27,51 @@ const uploadSchema = z.object({
   auditFile: fileSchema,
 });
 
-export async function uploadAuditFile(formData: FormData): Promise<{ success: boolean; message: string } > {
+/**
+ * Uploads the audit file (as BSON binary data) for the logged-in user.
+ * @param fileData Buffer containing the PDF file data.
+ * @returns Promise resolving to success/failure status and message.
+ */
+export async function uploadAuditFile(fileData: Buffer): Promise<{ success: boolean; message: string }> {
+    const session = await getServerSession(authOptions);
+    if (!session || !session.user?.id) {
+        return { success: false, message: "Not authenticated" };
+    }
+    const userId = session.user.id;
+
+    if (!fileData || fileData.length === 0) {
+        return { success: false, message: "No file data received." };
+    }
+
+    // Basic validation: Check if it looks like a PDF (optional but recommended)
+    // PDF files start with "%PDF-"
+    const pdfMagicNumber = Buffer.from("%PDF-");
+    if (!fileData.slice(0, pdfMagicNumber.length).equals(pdfMagicNumber)) {
+        return { success: false, message: "Invalid file type. Only PDF files are allowed." };
+    }
+
     try {
-        const session = await getServerSession(authOptions);
-        if (!session || !session.user?.id) {
-            return { success: false, message: "Unauthorized: User not logged in." };
-        }
-        const userId = session.user.id;
-
-        const file = formData.get('auditFile');
-        
-        // Validate the file using Zod schema
-        const validation = uploadSchema.safeParse({ auditFile: file });
-
-        if (!validation.success) {
-            const errors = validation.error.flatten().fieldErrors;
-            return { 
-                success: false, 
-                message: errors.auditFile?.[0] ?? "Invalid file provided.", 
-            };
-        }
-
-        const validatedFile = validation.data.auditFile;
-
-        // Read file into a Buffer
-        const buffer = Buffer.from(await validatedFile.arrayBuffer());
-
-        console.log(`Updating user ${userId} with audit file data (size: ${buffer.length} bytes)`);
-
         await db.user.update({
             where: { id: userId },
-            data: { 
-                auditFileData: buffer, 
+            data: {
+                auditFileData: fileData, // Store the Buffer directly
             },
         });
 
-        // Revalidate the profile path to show the updated info
-        revalidatePath('/profile');
-        revalidatePath('/profile/edit'); // Revalidate edit page too
+        console.log(`Audit file uploaded successfully for user: ${userId}`);
+        
+        // Revalidate the profile page to show the audit file status potentially
+        revalidatePath('/profile'); 
+        revalidatePath('/profile/edit');
 
         return { success: true, message: "Audit file uploaded successfully!" };
 
-    } catch (error: any) {
-        console.error("Error uploading audit file:", error);
-        return { success: false, message: "Database error: Failed to upload file." };
+    } catch (error: unknown) { // Use unknown
+        console.error(`Error uploading audit file for user ${userId}:`, error);
+        let message = "Failed to upload audit file.";
+        if (error instanceof Error) {
+            message = error.message;
+        }
+        return { success: false, message };
     }
 } 
