@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { ClassStanding, CourseStatus, DayOfWeek } from "@prisma/client";
 import { revalidatePath } from "next/cache";

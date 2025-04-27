@@ -3,7 +3,7 @@
 import { db } from "@/lib/db";
 import { Role } from "@prisma/client";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 
 export async function deleteNotification(notificationId: string): Promise<{ success: boolean; message: string }> {

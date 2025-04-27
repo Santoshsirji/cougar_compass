@@ -8,7 +8,7 @@ import { revalidatePath } from "next/cache";
 
 // Local imports
 import { db } from "@/lib/db";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth";
 
 const updateScheduleSchema = z.object({
     date: z.date({ required_error: "A date for this schedule is required." })
