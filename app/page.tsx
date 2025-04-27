@@ -4,8 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image'; // Import Next.js Image
 import { GraduationCap, CalendarDays, Briefcase } from 'lucide-react'; 
-import { useSession } from 'next-auth/react'; // Import useSession
-import coopSitting from '/public/images/coop_sitting.png'; // Import image statically
+import { useSession } from 'next-auth/react'; 
 
 export default function HomePage() {
     const messages = ["For a Cool College-Life", "Your Everyday Assistant", "Welcome to Coop!"];
@@ -27,7 +26,7 @@ export default function HomePage() {
                 <div className="cooper">
                     {/* Use Next.js Image component */}
                     <Image 
-                        src={coopSitting} 
+                        src={'/images/coop_sitting.png'} 
                         alt="Cooper Sitting" 
                         layout="fill" // Use fill for responsive background-like behavior
                         objectFit="cover"
