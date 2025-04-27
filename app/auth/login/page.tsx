@@ -34,7 +34,6 @@ export default function Login() {
     }
   }, [status, router, callbackUrl]);
 
-  // Show error toast if OAuth account creation failed
   useEffect(() => {
     if (error === "OAuthCreateAccount") {
       toast({
@@ -42,7 +41,6 @@ export default function Login() {
         description: "Could not create account. Please contact support if this issue persists.",
         variant: "destructive",
       });
-      // Optionally remove the error from URL after showing toast
       router.replace('/auth/login', { scroll: false });
     }
   }, [error, toast, router]);
@@ -69,7 +67,7 @@ export default function Login() {
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col items-center">
-             {/* Only Google Button */}
+             {/* Google Button */}
             <Button
               variant="outline"
               type="button"

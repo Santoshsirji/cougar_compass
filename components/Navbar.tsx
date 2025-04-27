@@ -57,8 +57,8 @@ export function Navbar() {
     const profileImageUrl = session?.user?.image || '/images/profile_logo.png'; // Default path
     const notificationCount = notifications.length;
 
-    return (
-        <>
+  return (
+    <>
             <header className="navbar">
                 <div className="logo">
                     <Link href="/" passHref>
@@ -91,12 +91,12 @@ export function Navbar() {
                          {session && ( 
                              <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
-                                    <Image 
+              <Image
                                         src={profileImageUrl} 
                                         alt="Profile" 
                                         className="profile-pic" 
-                                        width={40} 
-                                        height={40} 
+                width={40}
+                height={40}
                                         title={session.user?.name || 'Profile'}
                                         style={{ borderRadius: '50%', cursor: 'pointer' }} // Added cursor pointer
                                     />
@@ -120,8 +120,8 @@ export function Navbar() {
                          {!session && ( // Show login link if not logged in
                               <Link href="/auth/login" className="login-link">Login</Link>
                          )}
-                    </div>
-                </div>
+            </div>
+            </div>
             </header>
 
             {/* Sidebar Structure */}
@@ -145,7 +145,7 @@ export function Navbar() {
                                 <p className="message-preview">{notif.message}</p>
                                 <span className="timestamp">
                                     {formatDistanceToNow(new Date(notif.createdAt), { addSuffix: true })}
-                                </span>
+                </span>
                             </li>
                         ))}
                     </ul>
@@ -383,6 +383,6 @@ export function Navbar() {
                     display: block; /* Initially hidden by sidebar logic */
                 }
             `}</style>
-        </>
-    );
+    </>
+  );
 }

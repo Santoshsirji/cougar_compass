@@ -5,22 +5,16 @@ import Link from 'next/link';
 import Head from 'next/head'; // Import Head for FontAwesome link
 
 export default function CollegeLifePage() {
-    // Sidebar state is now managed by the Navbar component in layout
-    // No need for activeNavItem state here as Navbar handles its own links
 
     return (
         <>
-            {/* Add FontAwesome CDN Link - Consider moving to layout.tsx if not already there */}
             <Head>
                  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
             </Head>
 
-            {/* Navbar is handled by layout.tsx */}
-            {/* Sidebar is handled by Navbar.tsx */}
 
             <div className="main-content">
                 <div className="cooper">
-                    {/* Assuming image is in /public/images/ */}
                     <img src="/images/stalls.png" alt="Campus Life" className="veksler" />
                 </div>
 
@@ -28,37 +22,22 @@ export default function CollegeLifePage() {
                     <div className="collegelife-title">For a Holistic College Experience!</div>
                     
                     <div className="life-buttons">
-                        {/* Link to internal Events page - Updated */}
                         <Link href="/events" className="life-btn">
                             <i className="fas fa-calendar-alt"></i>
                             Events
                             <span className="life-description">Get Involved on Campus</span>
                         </Link>
                         
-                        {/* Link to internal Shuttle page - Updated */} 
                         <Link href="/shuttle" className="life-btn">
                             <i className="fas fa-bus"></i> {/* Changed icon */} 
                             Cougar Express
                             <span className="life-description">Plan your ride</span>
                         </Link>
-
-                        {/* Potential future buttons */} 
-                        {/* <button className="life-btn">
-                            <i className="fas fa-users"></i>
-                            Clubs & Orgs
-                            <span className="life-description">Find your community</span>
-                        </button>
-                        <button className="life-btn">
-                            <i className="fas fa-utensils"></i>
-                            Dining Info
-                            <span className="life-description">See menus and hours</span>
-                        </button> */}
                     </div>
                 </div>
             </div>
 
             <div className="ticker">
-                 {/* TODO: Make ticker dynamic or relevant to college life */} 
                 <div className="text">Upcoming Event: Movie Night on the Green this Friday! || Shuttle running on weekend schedule || Check out the new club fair next week...</div>
             </div>
 

@@ -3,29 +3,31 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { GraduationCap, CalendarDays, Briefcase } from 'lucide-react'; 
+import { useSession } from 'next-auth/react'; // Import useSession
 
 export default function HomePage() {
     const messages = ["For a Cool College-Life", "Your Everyday Assistant", "Welcome to Coop!"];
     const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
+    const { data: session, status } = useSession(); // Get session status
 
     useEffect(() => {
         const intervalId = setInterval(() => {
             setCurrentMessageIndex((prevIndex) => (prevIndex + 1) % messages.length);
         }, 5000); 
-        // Cleanup function to clear the interval when the component unmounts
+        
         return () => clearInterval(intervalId);
-    }, [messages.length]); // Re-run effect if messages array length changes
+    }, [messages.length]); 
 
     return (
         <>
             <div className="main-content">
-                {/* Image on the left with fade effect */}
+                
                 <div className="cooper">
-                     {/* Assuming image is in public/images/ */}
+                     
                     <img src="/images/coop_sitting.png" alt="Cooper Sitting" className="left-image" />
                 </div>
                 
-                {/* Text content on the right */}
+               
                 <div className="text-content">
                     <div className="text-pop">{messages[currentMessageIndex]}</div>
                     
@@ -53,28 +55,38 @@ export default function HomePage() {
                                 <p>Explore extra-curriculars and career options.</p>
                             </div>
                         </div>
-                        <div className="login">
-                             {/* Use Link component for internal navigation */}
-                             <Link href="/auth/login" passHref>
-                                 <button className="login-btn">Login / Sign Up with Google</button>
-                             </Link>
-                        </div>
+                        
+                        {status !== 'authenticated' && (
+                            <div className="login">
+                               
+                                <Link href="/auth/login" passHref>
+                                    <button className="login-btn">Login / Sign Up with Google</button>
+                                </Link>
+                            </div>
+                        )}
+                        {status === 'authenticated' && (
+                             <div className="login"> 
+                                <Link href="/dashboard" passHref>
+                                     <button className="login-btn dashboard-btn">Go to Dashboard</button> {/* Style as needed */}
+                                 </Link>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
 
-            {/* --- New About Section --- */}
+           
             <section className="about-section">
                 <h2>Your Campus Companion</h2>
                 <p>
-                    CoopGuide is designed to streamline your university experience. 
+                    Cougar Compass is designed to streamline your university experience. 
                     Access academic planning tools, stay updated on campus events, manage schedules, 
                     and explore career opportunities all in one place. 
-                    Let Coop be your guide to success at Caldwell University!
+                    Let Compass be your guide to success at Caldwell University!
                 </p>
             </section>
 
-            {/* --- New Key Features Section --- */}
+            
             <section className="key-features-section">
                 <h2>Explore CoopGuide Modules</h2>
                 <div className="features-grid">
@@ -96,7 +108,7 @@ export default function HomePage() {
                 </div>
             </section>
 
-            {/* Scoped CSS using styled-jsx */}
+           
             <style jsx>{`
                 body {
                     margin: 0;
@@ -223,7 +235,8 @@ export default function HomePage() {
                  @keyframes popText {
                     0%, 100% { opacity: 0; transform: translateY(15px); }
                     10%, 40% { opacity: 1; transform: translateY(0); }
-                    50%, 90% { opacity: 0; transform: translateY(-15px); }
+                    50%, 90% { opacity: 1; transform: translateY(0); } 
+                    95% { opacity: 0; transform: translateY(-15px); } 
                 }
 
                 /* News Ticker */
@@ -261,8 +274,8 @@ export default function HomePage() {
                 } */
 
                 .login {
+                    margin-top: 25px; /* Add some space above the button */
                     text-align: center; /* Center the button */
-                    margin-top: 25px; /* Add some space above */
                 }
 
                  /* Removed login h2 styles */
@@ -270,25 +283,23 @@ export default function HomePage() {
                  /* Removed .auth-buttons styles */
 
                 .login-btn {
-                    padding: 12px 30px;
-                    border: none;
-                    border-radius: 5px;
+                    padding: 12px 25px;
                     font-size: 16px;
                     font-weight: bold;
-                    cursor: pointer;
-                    transition: all 0.3s ease;
-                    background-color: #c40000;
                     color: white;
-                    border: 2px solid #c40000;
+                    background-color: #c40000; /* Theme red */
+                    border: none;
+                    border-radius: 25px; /* Rounded corners */
+                    cursor: pointer;
+                    transition: background-color 0.3s ease, transform 0.2s ease;
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
                 }
 
                  /* Removed signup-btn styles */
 
                 .login-btn:hover {
-                    background-color: #a30000; /* Darker red */
-                    border-color: #a30000;
-                    transform: translateY(-2px);
-                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                    background-color: #a00000; /* Darker red on hover */
+                    transform: translateY(-2px); /* Slight lift */
                 }
 
                  /* Removed signup-btn:hover styles */
@@ -365,6 +376,14 @@ export default function HomePage() {
                     color: #666;
                     line-height: 1.5;
                 }
+
+                /* Optional: Style the dashboard button differently if needed */
+                 /* .dashboard-btn { 
+                     background-color: #0056b3; Example: blue for dashboard 
+                 } 
+                 .dashboard-btn:hover { 
+                     background-color: #004494; Darker blue 
+                 } */
             `}</style>
         </>
     );

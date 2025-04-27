@@ -5,18 +5,16 @@ import Link from 'next/link';
 import Head from 'next/head'; // Import Head for FontAwesome link
 
 export default function CareerPage() {
-    // Navbar and Sidebar are handled by layout and Navbar component respectively
-
+    
     return (
         <>
-            {/* Add FontAwesome CDN Link - Consider moving to layout.tsx */}
             <Head>
                  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
             </Head>
 
             <div className="main-content">
                 <div className="image-container">
-                    {/* Replace with a relevant career-focused image */} 
+
                     <img src="/images/career_image.png" alt="Professional Setting" className="side-image" />
                 </div>
 
@@ -24,31 +22,28 @@ export default function CareerPage() {
                     <div className="career-title">Launch Your Future</div>
                     
                     <div className="career-buttons">
-                        {/* Example Button 1: Link to external job board */}
+
                         <button className="career-btn" onClick={() => window.open('https://caldwell.joinhandshake.com/', '_blank')}> {/* Replace with actual link */} 
                             <i className="fas fa-briefcase"></i>
                             Job & Internship Search
                             <span className="career-description">Find opportunities on Handshake</span>
                         </button>
                         
-                        {/* Example Button 2: Link to internal resource page */}
-                        {/* Change href to the direct PDF link */}
+                       
                         <Link href="https://www.caldwell.edu/wp-content/uploads/2023/05/New-Graduate-Guide.pdf" target="_blank" rel="noopener noreferrer" className="career-btn"> {/* Added target and rel for external PDF */}
                             <i className="fas fa-file-alt"></i>
                             Resume & Cover Letter Help
                             <span className="career-description">Access guides and templates</span>
                         </Link>
 
-                        {/* Example Button 3: Link to contact/scheduling */}
-                         {/* Change href to the Alumni Career Resources link */}
+                        
                          <Link href="https://www.caldwell.edu/alumni/alumni-career-resources/#:~:text=Call%20973%2D618%2D3290%20or,Follow%20us%20on%20Instagram%20%40careers_cu" target="_blank" rel="noopener noreferrer" className="career-btn"> {/* Added target and rel for external link */} 
                             <i className="fas fa-comments"></i>
                             Career Advising
                             <span className="career-description">Connect with a career counselor</span>
                         </Link>
                         
-                        {/* Example Button 4: Link to events */}
-                         {/* Change href to the Conference Services link */}
+                       
                          <Link href="https://www.caldwell.edu/conference-services/" target="_blank" rel="noopener noreferrer" className="career-btn"> {/* Added target and rel for external link */} 
                             <i className="fas fa-calendar-check"></i>
                             Networking Events
@@ -58,10 +53,6 @@ export default function CareerPage() {
                 </div>
             </div>
 
-            {/* Ticker is handled by layout.tsx */}
-            {/* <div className="ticker">
-                <div className="text">Career Fair next month! || Resume workshop this Wednesday || Internship application deadlines approaching...</div>
-            </div> */} 
 
             <style jsx>{`
                 /* Base styles */

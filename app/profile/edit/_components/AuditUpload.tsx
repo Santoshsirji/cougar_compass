@@ -17,8 +17,8 @@ export function AuditUpload({ hasCurrentAuditFile }: AuditUploadProps) {
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [isUploading, startUploadTransition] = useTransition();
     const { toast } = useToast();
-    const fileInputRef = useRef<HTMLInputElement>(null); // Ref to reset file input
-    const [hasFile, setHasFile] = useState(!!hasCurrentAuditFile); // Initialize based on prop
+    const fileInputRef = useRef<HTMLInputElement>(null); 
+    const [hasFile, setHasFile] = useState(!!hasCurrentAuditFile); 
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];

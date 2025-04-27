@@ -33,7 +33,7 @@ export default function RootLayout({
       >
         <Providers>
           <Navbar />
-          <main className="pt-[80px] pb-[50px]">
+          <main className="pt-10 pb-[50px]">
             {children}
           </main>
           <EventTicker />

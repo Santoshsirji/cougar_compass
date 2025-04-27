@@ -1,19 +1,20 @@
 'use server';
 
+// Global imports
 import { z } from "zod";
-import { db } from "@/lib/db";
 import { Prisma, Role } from "@prisma/client";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { revalidatePath } from "next/cache";
 
-// Zod schema for input validation
+// Local imports
+import { db } from "@/lib/db";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+
 const updateScheduleSchema = z.object({
-    date: z.date({ required_error: "A date for this schedule is required." }),
+    date: z.date({ required_error: "A date for this schedule is required." })
+            .transform(date => new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()))), 
     notes: z.string().optional(),
-    scheduleData: z.any(), // Accept any valid JSON structure for now
-                         // TODO: Consider defining a stricter Zod schema for scheduleData
-                         // based on the expected JSON structure if needed for validation.
+    scheduleData: z.any(),
 });
 
 type UpdateScheduleInput = z.infer<typeof updateScheduleSchema>;
@@ -32,37 +33,42 @@ export async function updateShuttleSchedule(data: UpdateScheduleInput): Promise<
         }
 
         const { date, notes, scheduleData } = validation.data;
-        const userId = session.user.id; // Get admin user ID
+        const userId = session.user.id;
 
-        console.log(`Attempting to update/create schedule for ${date.toLocaleDateString()} by user ${userId}`);
+        // Day Validation
+        const dayOfWeek = date.getUTCDay(); // 0=Sun, 6=Sat
+        if (dayOfWeek === 0 || dayOfWeek === 5 || dayOfWeek === 6) { // Sun, Fri, Sat
+             return { success: false, message: "Schedules can only be set for Monday through Thursday." };
+        }
+
+        console.log(`Attempting to update/create schedule for ${date.toLocaleDateString('en-CA', { timeZone: 'UTC' })} by user ${userId}`);
 
         await db.shuttleSchedule.upsert({
             where: { date: date },
             update: {
                 notes: notes,
-                scheduleData: scheduleData as Prisma.InputJsonValue, // Cast to Prisma JSON type
-                userId: userId, // Track who updated it
+                scheduleData: scheduleData as Prisma.InputJsonValue,
+                userId: userId, 
             },
             create: {
                 date: date,
                 notes: notes,
-                scheduleData: scheduleData as Prisma.InputJsonValue, // Cast to Prisma JSON type
-                userId: userId, // Track who created it
+                scheduleData: scheduleData as Prisma.InputJsonValue,
+                userId: userId, 
             },
         });
 
-        console.log(`Shuttle schedule for ${date.toLocaleDateString()} updated successfully.`);
+        console.log(`Shuttle schedule for ${date.toLocaleDateString('en-CA', { timeZone: 'UTC' })} updated successfully.`);
         
-        // Revalidate the admin shuttle path to reflect changes immediately
         revalidatePath('/admin/shuttle-schedule');
         revalidatePath('/shuttle');
 
-        return { success: true, message: `Schedule for ${date.toLocaleDateString()} updated successfully!` };
+        return { success: true, message: `Schedule for ${date.toLocaleDateString('en-CA', { timeZone: 'UTC' })} updated successfully!` };
 
     } catch (error: any) {
-        // Handle potential unique constraint violation
         if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
-           return { success: false, message: `Error: A schedule already exists for ${data.date.toLocaleDateString()}. Please edit the existing schedule.` };
+           const originalDateString = data.date ? new Date(data.date).toLocaleDateString() : 'the selected date';
+           return { success: false, message: `Error: A schedule already exists for ${originalDateString}. Please edit the existing schedule.` };
         }
         console.error(`Error updating shuttle schedule for ${data.date?.toLocaleDateString()}:`, error);
         return { success: false, message: "Failed to update schedule." };

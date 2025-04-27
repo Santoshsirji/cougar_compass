@@ -1,9 +1,9 @@
-import { getPublicEvents } from "@/app/actions/getPublicEvents";
 import Image from 'next/image';
 import { format } from 'date-fns';
 import { Calendar, MapPin } from 'lucide-react';
 
-// Revalidate data every hour (optional)
+import { getPublicEvents } from "@/app/actions/getPublicEvents";
+
 export const revalidate = 3600; 
 
 export default async function EventsPage() {
@@ -38,7 +38,7 @@ export default async function EventsPage() {
                                 <h2 className="text-2xl font-semibold mb-2 text-gray-800 hover:text-red-700 transition-colors">{event.title}</h2>
                                 <div className="flex items-center text-sm text-gray-600 mb-3">
                                     <Calendar size={16} className="mr-2 text-red-600 flex-shrink-0" />
-                                    <span>{format(new Date(event.date), 'EEEE, MMMM do, yyyy 'at' h:mm a')}</span> 
+                                    <span>{format(new Date(event.date), 'EEEE, MMMM do, yyyy \'at\' h:mm a')}</span> 
                                 </div>
                                 {event.location && (
                                     <div className="flex items-center text-sm text-gray-600 mb-4">
@@ -49,8 +49,6 @@ export default async function EventsPage() {
                                 <p className="text-gray-700 mb-5 flex-grow">
                                     {event.description || 'More details coming soon.'}
                                 </p>
-                                {/* Optional: Add a button or link if needed */}
-                                {/* <button className="mt-auto bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700 transition-colors self-start">Learn More</button> */} 
                             </div>
                         </div>
                     ))}

@@ -49,11 +49,9 @@ function formatDisplayTime(timeString: string | null | undefined): string {
 export default async function ProfilePage() {
   const user = await getUserProfile(); // Call the server action
 
-  // Handle cases where user data couldn't be fetched (already handled in action, but good practice)
+ 
   if (!user) {
-     // Redirect to login, maybe with an error message if needed
-     // The middleware should ideally catch unauthenticated users first,
-     // but this handles cases where the action returns null for other reasons (e.g., DB error)
+    
     console.error("ProfilePage: Failed to get user profile data.");
     redirect("/auth/login?error=ProfileNotFound"); 
   }
@@ -65,7 +63,7 @@ export default async function ProfilePage() {
         <Card className="overflow-hidden shadow-lg border-border/50 relative">
           <CardHeader className="bg-gradient-to-r from-primary/10 via-background to-background p-6 md:p-8 flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-6">
             <Avatar className="h-24 w-24 border-4 border-background shadow-md">
-              {/* Prioritize imageURL, then image, then fallback */}
+              
               <AvatarImage 
                 src={user.imageURL || user.image || undefined} 
                 alt={user.name || "User profile"} 

@@ -7,7 +7,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import Link from "next/link";
-import Image from "next/image";
 import { ArrowRight, Mail, Lock, Eye, EyeOff } from "lucide-react";
 
 const loginSchema = z.object({
@@ -51,7 +50,7 @@ export default function LoginPage() {
         return;
       }
 
-      // Redirect to dashboard on successful login
+      
       router.push("/dashboard");
       router.refresh();
     } catch (error) {

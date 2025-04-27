@@ -4,16 +4,27 @@ import { z } from "zod";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { db } from "@/lib/db";
-import { Prisma, ClassStanding, CourseStatus } from "@prisma/client";
+import { Prisma, ClassStanding, CourseStatus, DayOfWeek } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 
 // Define nested schemas for complex array types
+
+// Define the occurrence schema first (or inline)
+const scheduleOccurrenceSchema = z.object({
+  dayOfWeek: z.nativeEnum(DayOfWeek), // Day is required
+  startTime: z.string().optional().nullable(),
+  endTime: z.string().optional().nullable(),
+  location: z.string().optional().nullable(),
+});
+
 const courseScheduleEntrySchema = z.object({
   courseCode: z.string().min(1, "Course code is required"),
   courseName: z.string().min(1, "Course name is required"),
   semester: z.string().min(1, "Semester is required"),
   status: z.nativeEnum(CourseStatus),
-  grade: z.string().optional().nullable(), // Allow null for grade in schedule
+  grade: z.string().optional().nullable(),
+  // Use the occurrence schema here
+  occurrences: z.array(scheduleOccurrenceSchema).optional(), 
 });
 
 const courseTakenEntrySchema = z.object({
@@ -70,9 +81,11 @@ export async function updateUserProfile(data: UpdateProfileInput): Promise<{ suc
 
     const updateData = validation.data;
 
-    // --- Actual Database Update --- 
+    // --- Log the validated data before DB update ---
     console.log("Attempting to update profile for user:", session.user.id);
-    console.log("With data:", updateData);
+    console.log("Validated updateData:", JSON.stringify(updateData, null, 2)); 
+    // Specifically log the course schedule part
+    console.log("Course Schedule being sent to DB:", JSON.stringify(updateData.courseSchedule, null, 2));
 
     await db.user.update({
       where: { id: session.user.id },

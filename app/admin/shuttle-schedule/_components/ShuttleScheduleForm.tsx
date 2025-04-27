@@ -190,7 +190,7 @@ export function ShuttleScheduleForm({ initialData, onSubmitSuccess, onDeleteSucc
                 if (onDeleteSuccess) {
                     onDeleteSuccess();
                 } else {
-                    router.push('/admin/shuttle');
+                    router.push('/admin/shuttle-schedule');
                 }
             } else {
                 toast({ title: "Error", description: result.message, variant: "destructive" });
