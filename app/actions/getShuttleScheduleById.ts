@@ -1,8 +1,11 @@
 'use server';
 
+// Global imports
+// Removed unused Prisma import
+
+// Local imports
 import { db } from "@/lib/db";
-import { Prisma } from "@prisma/client";
-import type { ShuttleScheduleWithUpdater } from "@/types/shuttle"; // Use the detailed type
+import type { ShuttleScheduleWithUpdater } from "@/types/shuttle"; // Import the specific type needed
 
 /**
  * Fetches a single shuttle schedule by its ID, including full details.
@@ -15,12 +18,11 @@ export async function getShuttleScheduleById(id: string): Promise<ShuttleSchedul
 
     try {
         const schedule = await db.shuttleSchedule.findUnique({
-            where: { id: id },
+            where: { id },
             include: {
-                updatedBy: { // Include the related user
+                updatedBy: {
                     select: {
-                        name: true, // Select the user's name
-                        // id: true // Optionally include user ID if needed by the form
+                        name: true,
                     },
                 },
             },
@@ -36,7 +38,7 @@ export async function getShuttleScheduleById(id: string): Promise<ShuttleSchedul
         return schedule as ShuttleScheduleWithUpdater;
 
     } catch (error) {
-        console.error(`Error fetching shuttle schedule by ID ${id}:`, error);
-        throw new Error("Failed to fetch shuttle schedule details."); // Or return null
+        console.error(`Error fetching shuttle schedule with ID ${id}:`, error);
+        return null;
     }
 } 

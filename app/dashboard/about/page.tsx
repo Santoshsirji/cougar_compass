@@ -1,8 +1,6 @@
-'use client'; // Mark as Client Component for useState and clipboard access
-
+'use client'; 
 import Image from 'next/image';
-import Link from 'next/link';
-import { useState } from 'react'; // Import useState
+import { useState } from 'react'; 
 
 // Define an interface for the team member data
 interface TeamMember {

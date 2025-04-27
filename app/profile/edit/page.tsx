@@ -208,11 +208,9 @@ export default function EditProfilePage() {
   const [hasAuditFile, setHasAuditFile] = useState(false); // Track if file exists in DB
   const auditFileInputRef = useRef<HTMLInputElement>(null);
 
-  // Initialize react-hook-form
   const form = useForm<UpdateProfileInput>({
     resolver: zodResolver(updateProfileSchema) as any,
     defaultValues: {
-      // Initialize with empty or default values
       name: '',
       phone: '',
       mobile: '',
@@ -220,7 +218,7 @@ export default function EditProfilePage() {
       city: '',
       zipcode: '',
       studentId: '',
-      major: '', // Default to empty, will be filled from fetched data
+      major: '', 
       minor: '',
       classStanding: undefined, // Default to undefined for Select placeholder
       // New fields
@@ -253,7 +251,6 @@ export default function EditProfilePage() {
       setIsLoading(true);
       const profile = await getUserProfile();
       if (profile) {
-        // Reset form with fetched data
         form.reset({
           name: profile.name || '',
           phone: profile.phone || '',
@@ -291,7 +288,7 @@ export default function EditProfilePage() {
       setIsLoading(false);
     }
     loadProfile();
-  }, [toast, form.reset]); // form.reset is stable
+  }, [toast, form]); // Added form
 
   const onSubmit: SubmitHandler<UpdateProfileInput> = async (data) => {
     setIsSaving(true);
@@ -326,19 +323,26 @@ export default function EditProfilePage() {
           return;
       }
 
+      // Create FormData and append the file
       const formData = new FormData();
       formData.append('auditFile', selectedAuditFile);
 
       startAuditUploadTransition(async () => {
-          const result = await uploadAuditFile(formData);
-          if (result.success) {
-              toast({ title: "Success", description: result.message });
-              setSelectedAuditFile(null); // Clear selection
-              if(auditFileInputRef.current) auditFileInputRef.current.value = ""; // Clear file input
-              setHasAuditFile(true); // Update state to show file exists
-              // Optionally, re-fetch user data if needed, but revalidate should handle it
-          } else {
-              toast({ title: "Error", description: result.message, variant: "destructive" });
+          try {
+              // Pass the FormData directly to the server action
+              const result = await uploadAuditFile(formData);
+
+              if (result.success) {
+                  toast({ title: "Success", description: result.message });
+                  setSelectedAuditFile(null); // Clear selection
+                  if(auditFileInputRef.current) auditFileInputRef.current.value = ""; // Clear file input
+                  setHasAuditFile(true); // Update state to show file exists
+              } else {
+                  toast({ title: "Error", description: result.message, variant: "destructive" });
+              }
+          } catch (error) {
+              console.error("Error uploading file:", error);
+              toast({ title: "Error", description: "Failed to upload the file.", variant: "destructive" });
           }
       });
   };

@@ -1,20 +1,20 @@
 'use server';
 
 import { db } from "@/lib/db";
-import { Prisma, Event } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 
-// Define the type for the data we expect to return for the public page
-// Exclude creator info if not needed publicly
+// Define the type explicitly with selected fields
 export type PublicEvent = Prisma.EventGetPayload<{
-    select: {
-        id: true,
-        title: true,
-        description: true,
-        date: true,
-        location: true,
-        imageUrl: true,
-        createdAt: true, // Optional: useful for sorting if dates are the same
-    }
+  select: {
+    id: true,
+    title: true,
+    description: true,
+    date: true,
+    location: true,
+    imageUrl: true,
+    createdAt: true,
+    // Explicitly exclude: createdById, updatedAt, createdBy
+  }
 }>;
 
 /**
@@ -24,15 +24,14 @@ export type PublicEvent = Prisma.EventGetPayload<{
  */
 export async function getPublicEvents(): Promise<PublicEvent[]> {
     try {
-        const today = new Date();
-        today.setHours(0, 0, 0, 0); // Set to the beginning of the day for comparison
-
         const events = await db.event.findMany({
             where: {
-                date: { gte: today } // Get events from today onwards
+                date: { 
+                    gte: new Date() // Only fetch events from today onwards
+                }
             },
             orderBy: {
-                date: 'asc', // Show upcoming events first
+                date: 'asc', 
             },
             select: {
                 id: true,
@@ -42,13 +41,13 @@ export async function getPublicEvents(): Promise<PublicEvent[]> {
                 location: true,
                 imageUrl: true,
                 createdAt: true,
+                // Exclude createdById, updatedAt, createdBy
             }
         });
-
-        return events;
-
+        // Cast to ensure type safety, though select should handle it
+        return events as PublicEvent[];
     } catch (error) {
         console.error("Error fetching public events:", error);
-        return []; // Return empty array on error
+        return [];
     }
 } 

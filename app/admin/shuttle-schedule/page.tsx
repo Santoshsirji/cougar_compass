@@ -1,13 +1,12 @@
 'use client';
 
 import { useState, useEffect, useTransition } from 'react';
-// import { DayOfWeek } from "@prisma/client"; // No longer needed
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { ScrollArea } from "@/components/ui/scroll-area"; // If list can be long
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { PlusCircle, Edit, Loader2 } from "lucide-react";
 
 import { getShuttleSchedules, ShuttleScheduleOverview } from "@/app/actions/getShuttleSchedules";
@@ -22,15 +21,12 @@ export default function ShuttleSchedulePage() {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [isLoadingDialog, setIsLoadingDialog] = useState(false);
     const [editingSchedule, setEditingSchedule] = useState<ShuttleScheduleWithUpdater | null>(null);
-    const [_, startTransition] = useTransition();
+    const [, startTransition] = useTransition();
 
     // Fetch schedules on component mount
     useEffect(() => {
         fetchSchedules();
     }, []);
-
-    // Update available days whenever schedules change
-    // useEffect(() => { ... });
 
     const fetchSchedules = async () => {
         setIsLoading(true);

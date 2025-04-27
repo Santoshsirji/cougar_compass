@@ -14,8 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   User, Clock, BookOpen, AlertTriangle, GraduationCap, Phone, Mail, MapPin, CalendarDays, Building, Star, Edit, FileText, Award, ShieldCheck, Users
 } from "lucide-react";
-import { getUserProfile, type UserProfileData } from "@/app/actions/getUserProfile"; // Import the action
-import { DayOfWeek } from '@prisma/client'; // Import DayOfWeek
+import { getUserProfile } from "@/app/actions/getUserProfile";
 
 const getInitials = (name: string) => {
   const names = name.split(' ');

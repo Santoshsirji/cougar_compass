@@ -1,14 +1,9 @@
 'use client';
 
-import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Bell } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-/* ---------------------------------
-| Reusable AcademicButton Component |
------------------------------------ */
 interface AcademicButtonProps {
   href?: string;
   externalLink?: string;
@@ -43,13 +38,7 @@ function AcademicButton({ href, externalLink, icon, title, description }: Academ
   );
 }
 
-/* ------------------------------
-| Main Academia Page Component  |
-------------------------------- */
 export default function AcademiaPage() {
-  const [activeItem, setActiveItem] = useState('Academia');
-
-  const navItems = ['Academia', 'College Life', 'Career', 'Profile'];
 
   const academicResources: AcademicButtonProps[] = [
     {

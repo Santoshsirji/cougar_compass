@@ -1,14 +1,19 @@
 'use server';
 
 import { db } from "@/lib/db";
-import { Prisma, Notification } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 // Re-introduce the type including creator info
 export type NotificationWithCreator = Prisma.NotificationGetPayload<{
     include: {
-        createdBy: { select: { id: true, name: true } }
+        createdBy: {
+            select: {
+                name: true;
+                id: true;
+            }
+        }
     }
 }>;
 
@@ -42,7 +47,10 @@ export async function getNotifications(): Promise<NotificationWithCreator[]> {
             },
             include: { // Use include to get related creator data
                  createdBy: {
-                     select: { id: true, name: true } // Select creator's id and name
+                     select: {
+                         name: true,
+                         id: true    
+                     }
                  }
             }
             // Removed select clause as include is now used

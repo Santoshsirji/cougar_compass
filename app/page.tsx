@@ -2,13 +2,15 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image'; // Import Next.js Image
 import { GraduationCap, CalendarDays, Briefcase } from 'lucide-react'; 
 import { useSession } from 'next-auth/react'; // Import useSession
+import coopSitting from '/public/images/coop_sitting.png'; // Import image statically
 
 export default function HomePage() {
     const messages = ["For a Cool College-Life", "Your Everyday Assistant", "Welcome to Coop!"];
     const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
-    const { data: session, status } = useSession(); // Get session status
+    const { status } = useSession(); 
 
     useEffect(() => {
         const intervalId = setInterval(() => {
@@ -23,8 +25,16 @@ export default function HomePage() {
             <div className="main-content">
                 
                 <div className="cooper">
-                     
-                    <img src="/images/coop_sitting.png" alt="Cooper Sitting" className="left-image" />
+                    {/* Use Next.js Image component */}
+                    <Image 
+                        src={coopSitting} 
+                        alt="Cooper Sitting" 
+                        layout="fill" // Use fill for responsive background-like behavior
+                        objectFit="cover"
+                        objectPosition="center"
+                        priority // Consider adding priority if it's LCP
+                        className="left-image-mask" // Use a class for the mask
+                    />
                 </div>
                 
                
@@ -36,7 +46,7 @@ export default function HomePage() {
                             <div className="feature-icon">📍</div>
                             <div className="info">
                                 <h3>Excel in Academia</h3>
-                                <p>Share your goals and let's plan together.</p>
+                                <p>Share your goals and let&apos;s plan together.</p>
                             </div>
                         </div>
                         
@@ -173,11 +183,8 @@ export default function HomePage() {
                     overflow: hidden;
                 }
 
-                .left-image {
-                    width: 100%;
-                    height: 100%;
-                    object-fit: cover;
-                    object-position: center;
+                /* Apply mask via class */
+                .left-image-mask {
                     -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,1) 70%, rgba(0,0,0,0));
                     mask-image: linear-gradient(to right, rgba(0,0,0,1) 70%, rgba(0,0,0,0));
                 }

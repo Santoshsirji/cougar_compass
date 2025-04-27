@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 import { db } from "@/lib/db";
-import { Prisma, Role } from "@prisma/client";
+import { Role } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { revalidatePath } from "next/cache";
@@ -47,9 +47,12 @@ export async function deleteEvent(data: { id: string }): Promise<{ success: bool
 
         return { success: true, message: `Event "${existingEvent.title}" deleted successfully!` };
 
-    } catch (error: any) {
-        console.error(`Error deleting event ${data.id}:`, error);
-        // Handle specific errors if needed
-        return { success: false, message: "Database error: Failed to delete event." };
+    } catch (error: unknown) {
+        console.error('Failed to delete event:', error);
+        let message = "Database error: Failed to delete event.";
+        if (error instanceof Error) {
+            message = error.message;
+        }
+        return { success: false, message };
     }
 } 

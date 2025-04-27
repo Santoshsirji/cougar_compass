@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/components/ui/use-toast';
-import { Loader2, Upload, FileText, ExternalLink, Download } from 'lucide-react';
+import { Loader2, Upload, FileText, Download } from 'lucide-react';
 import Link from 'next/link';
 
 interface AuditUploadProps {

@@ -4,10 +4,10 @@ import { useState, useTransition } from 'react';
 import { NotificationWithCreator } from "@/app/actions/getNotifications";
 import { deleteNotification } from '@/app/actions/deleteNotification';
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { MoreHorizontal, Trash2, Edit, PlusCircle } from "lucide-react";
+import { MoreHorizontal, Edit, PlusCircle } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { useToast } from "@/components/ui/use-toast";
@@ -123,7 +123,7 @@ export default function NotificationList({ initialNotifications }: NotificationL
                                             <AlertDialogHeader>
                                             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                                             <AlertDialogDescription>
-                                                This action cannot be undone. This will permanently delete the notification titled "{notificationToDelete?.title}".
+                                                This action cannot be undone. This will permanently delete the notification titled &quot;{notificationToDelete?.title}&quot;.
                                             </AlertDialogDescription>
                                             </AlertDialogHeader>
                                             <AlertDialogFooter>

@@ -1,17 +1,17 @@
 'use client';
 
 // Global imports
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { format, startOfDay, isBefore } from 'date-fns';
+import React, { useState, useEffect} from 'react';
+import { format, startOfDay } from 'date-fns';
 import { Loader2, Info, Calendar as CalendarIcon, Clock } from 'lucide-react';
 
 // Local imports
 import { Calendar } from "@/components/ui/calendar";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { getShuttleSchedule, ParsedShuttleScheduleData } from '@/app/actions/getShuttleSchedule';
+import { getShuttleSchedule } from '@/app/actions/getShuttleSchedule';
 
 type DisplayShuttleSchedule = {
     notes: string | null;

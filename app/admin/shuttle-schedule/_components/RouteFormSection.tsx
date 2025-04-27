@@ -1,31 +1,25 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useFormContext, Controller, Control, UseFormRegister, UseFormSetValue, UseFormGetValues, FormState } from 'react-hook-form';
+import { Control, UseFormRegister, UseFormSetValue, UseFormGetValues, FormState } from 'react-hook-form';
+import { Trash2, PlusCircle } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Trash2, PlusCircle } from "lucide-react";
 import type { ShuttleFormValues } from "@/lib/schemas/shuttle";
 
 interface RouteFormSectionProps {
     routeIndex: number;
     removeRoute: (index: number) => void;
-    // Pass methods from the main form
     control: Control<ShuttleFormValues>;
     register: UseFormRegister<ShuttleFormValues>;
     setValue: UseFormSetValue<ShuttleFormValues>;
     getValues: UseFormGetValues<ShuttleFormValues>;
     formState: FormState<ShuttleFormValues>;
-    canRemoveRoute: boolean; // To enable/disable route removal button
-}
-
-// Represents the local state for stops and times within this component
-interface RouteState {
-    stops: string[];
-    times: string[][];
+    canRemoveRoute: boolean;
 }
 
 export function RouteFormSection({ 
@@ -39,21 +33,17 @@ export function RouteFormSection({
     canRemoveRoute 
 }: RouteFormSectionProps) {
 
-    // Get initial state for this route from the main form
     const initialRouteData = getValues(`scheduleData.${routeIndex}`);
-    const [stops, setStops] = useState<string[]>(initialRouteData?.stops || ['']);
-    // Ensure initial times are string[][] by converting undefined/null to ''
-    const initialTimes = initialRouteData?.times?.map(row =>
-        row.map(time => time ?? '') // Convert undefined/null to empty string
+    const [stops, setStops] = useState<string[]>(initialRouteData?.stops?.map(stop => stop ?? '') || ['']);
+    const initialTimes = initialRouteData?.times?.map((row: (string | null | undefined)[]) => 
+        row.map((time: string | null | undefined) => time ?? '')
     ) || [['']];
     const [times, setTimes] = useState<string[][]>(initialTimes);
 
-    // Path names for registration
     const routeNamePath = `scheduleData.${routeIndex}.name` as const;
     const stopsPath = `scheduleData.${routeIndex}.stops` as const;
     const timesPath = `scheduleData.${routeIndex}.times` as const;
 
-    // Sync main form when local state changes
     useEffect(() => {
         setValue(stopsPath, stops, { shouldValidate: true, shouldDirty: true });
     }, [stops, setValue, stopsPath]);
@@ -62,20 +52,17 @@ export function RouteFormSection({
         setValue(timesPath, times, { shouldValidate: true, shouldDirty: true });
     }, [times, setValue, timesPath]);
 
-    // --- Stop Management --- 
     const handleAddStop = () => {
         const newStops = [...stops, ''];
         setStops(newStops);
-        // Add a new column (with empty string) to each existing time row
-        const newTimes = times.map(row => [...row, '']);
+        const newTimes = times.map((row: string[]) => [...row, '']);
         setTimes(newTimes);
     };
 
     const handleRemoveStop = (stopIndex: number) => {
-        const newStops = stops.filter((_, index) => index !== stopIndex);
+        const newStops = stops.filter((_: string, index: number) => index !== stopIndex);
         setStops(newStops);
-        // Remove the corresponding column from each time row
-        const newTimes = times.map(row => {
+        const newTimes = times.map((row: string[]) => {
             const newRow = [...row];
             newRow.splice(stopIndex, 1);
             return newRow;
@@ -89,19 +76,18 @@ export function RouteFormSection({
         setStops(newStops);
     };
 
-     // --- Time Management --- 
     const addDepartureRow = () => {
         const newRow = Array(stops.length).fill('');
         setTimes([...times, newRow]);
     };
 
     const removeTimeRow = (rowIndex: number) => {
-        const newTimes = times.filter((_, index) => index !== rowIndex);
+        const newTimes = times.filter((_: string[], index: number) => index !== rowIndex);
         setTimes(newTimes);
     };
 
      const handleTimeChange = (rowIndex: number, colIndex: number, value: string) => {
-        const newTimes = times.map((row, rIdx) => {
+        const newTimes = times.map((row: string[], rIdx: number) => {
             if (rIdx === rowIndex) {
                 const newRow = [...row];
                 newRow[colIndex] = value;
@@ -112,7 +98,6 @@ export function RouteFormSection({
         setTimes(newTimes);
     };
 
-    // Get errors for this specific section
     const routeErrors = formState.errors.scheduleData?.[routeIndex];
 
     return (
@@ -126,7 +111,6 @@ export function RouteFormSection({
                 > <Trash2 className="h-4 w-4" /> </Button>
             )}
             <CardContent className="space-y-4">
-                {/* Route Name - Still directly registered with RHF */}
                 <FormField
                     control={control} name={routeNamePath}
                     render={({ field }) => (
@@ -138,7 +122,6 @@ export function RouteFormSection({
                     )}
                 />
 
-                {/* --- Stops Section (uses local state) --- */}
                 <div>
                     <FormLabel>Stops</FormLabel>
                     <div className="space-y-2 mt-1">
@@ -149,7 +132,6 @@ export function RouteFormSection({
                                     value={stop}
                                     onChange={(e) => handleStopChange(stopIndex, e.target.value)}
                                 />
-                                {/* Register hidden input to keep RHF aware for validation */}
                                 <input type="hidden" {...register(`${stopsPath}.${stopIndex}`)} />
                                 
                                 {stops.length > 1 && (
@@ -159,15 +141,11 @@ export function RouteFormSection({
                         ))}
                     </div>
                     <Button type="button" variant="outline" size="sm" className="mt-2" onClick={handleAddStop}> <PlusCircle className="mr-2 h-4 w-4" /> Add Stop </Button>
-                    {/* Display stops array-level error from RHF */}
                     {routeErrors?.stops?.root && (
                         <p className="text-sm font-medium text-destructive mt-1"> {routeErrors.stops.root.message} </p>
                     )}
-                     {/* Display individual stop errors if needed (more complex) */} 
-                     {/* {stops.map((_, stopIndex) => routeErrors?.stops?.[stopIndex] && <p key={`stop-err-${stopIndex}`} className="text-sm font-medium text-destructive mt-1">Stop {stopIndex+1}: {routeErrors.stops[stopIndex]?.message}</p>)} */} 
                 </div>
 
-                {/* --- Times Table Section (uses local state) --- */}
                 <div>
                     <FormLabel>Times</FormLabel>
                     <Card className="mt-1 border-none">
@@ -189,7 +167,6 @@ export function RouteFormSection({
                                                          value={timeRow[stopIndex] ?? ''} 
                                                          onChange={(e) => handleTimeChange(timeIndex, stopIndex, e.target.value)}
                                                      />
-                                                     {/* Register hidden input */}
                                                     <input type="hidden" {...register(`${timesPath}.${timeIndex}.${stopIndex}`)} />
                                                  </TableCell>
                                             ))}
@@ -205,7 +182,6 @@ export function RouteFormSection({
                         </CardContent>
                     </Card>
                     <Button type="button" variant="outline" size="sm" className="mt-2" onClick={addDepartureRow} disabled={stops.length === 0}> <PlusCircle className="mr-2 h-4 w-4" /> Add Departure Time </Button>
-                     {/* Display times array-level error from RHF (like mismatched columns) */}
                      {routeErrors?.times?.root && (
                         <p className="text-sm font-medium text-destructive mt-1"> {routeErrors.times.root.message} </p>
                     )}

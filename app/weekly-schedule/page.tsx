@@ -5,7 +5,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getUserProfile } from "@/app/actions/getUserProfile"; // Import action to get profile data
-import { DayOfWeek, CourseScheduleEntry } from '@prisma/client'; // Import necessary types
+import { DayOfWeek } from '@prisma/client'; // Import necessary types
 
 // Helper function to format time (optional, adjust as needed)
 function formatTime(timeString: string | null | undefined): string {

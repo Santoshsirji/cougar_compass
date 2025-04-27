@@ -3,18 +3,13 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import Head from 'next/head'; // Import Head for FontAwesome link
+import Image from 'next/image'; // Import next/image
 
 export default function AcademiaPage() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    const [activeNavItem, setActiveNavItem] = useState('Academia'); // Set initial active item
 
     const toggleSidebar = () => {
         setIsSidebarOpen(!isSidebarOpen);
-    };
-
-    const handleNavClick = (itemName: string) => {
-        setActiveNavItem(itemName);
-        // Navigation will be handled by Link components
     };
 
     return (
@@ -41,7 +36,14 @@ export default function AcademiaPage() {
 
             <div className="main-content">
                 <div className="cooper">
-                    <img src="/images/study.png" alt="Studying Students" className="veksler" />
+                    <Image 
+                        src="/images/study.png" 
+                        alt="Studying Students" 
+                        fill
+                        style={{ objectFit: 'cover', objectPosition: 'center' }}
+                        className="veksler"
+                        priority
+                    />
                 </div>
 
                 <div className="text-content">

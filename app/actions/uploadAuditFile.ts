@@ -1,53 +1,50 @@
 'use server';
-
-// Remove fs/promises and path imports as we no longer write to disk
-// import { writeFile, mkdir } from 'fs/promises';
-// import path from 'path';
-import { z } from "zod";
 import { db } from "@/lib/db";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { revalidatePath } from "next/cache";
-import { Role } from "@prisma/client";
-
-// Define validation schema for the file
-const fileSchema = z.instanceof(File).refine(
-    (file) => file.size > 0, 
-    { message: "File cannot be empty." }
-).refine(
-    (file) => file.size <= 5 * 1024 * 1024, // 5MB limit
-    { message: "File size must be 5MB or less." }
-).refine(
-    (file) => file.type === "application/pdf",
-    { message: "Only PDF files are allowed." }
-);
-
-// Define schema for the FormData input
-const uploadSchema = z.object({
-  auditFile: fileSchema,
-});
 
 /**
  * Uploads the audit file (as BSON binary data) for the logged-in user.
- * @param fileData Buffer containing the PDF file data.
+ * @param formData FormData containing the audit file under the key 'auditFile'.
  * @returns Promise resolving to success/failure status and message.
  */
-export async function uploadAuditFile(fileData: Buffer): Promise<{ success: boolean; message: string }> {
+export async function uploadAuditFile(formData: FormData): Promise<{ success: boolean; message: string }> {
     const session = await getServerSession(authOptions);
     if (!session || !session.user?.id) {
         return { success: false, message: "Not authenticated" };
     }
     const userId = session.user.id;
 
+    const file = formData.get('auditFile') as File | null;
+
+    if (!file) {
+        return { success: false, message: "No file found in form data." };
+    }
+
+    // Convert File to Buffer
+    let fileData: Buffer;
+    try {
+        const arrayBuffer = await file.arrayBuffer();
+        fileData = Buffer.from(arrayBuffer);
+    } catch (error) {
+        console.error("Error converting file to buffer:", error);
+        return { success: false, message: "Error processing file." };
+    }
+
     if (!fileData || fileData.length === 0) {
-        return { success: false, message: "No file data received." };
+        return { success: false, message: "No file data received after processing." };
     }
 
     // Basic validation: Check if it looks like a PDF (optional but recommended)
-    // PDF files start with "%PDF-"
     const pdfMagicNumber = Buffer.from("%PDF-");
     if (!fileData.slice(0, pdfMagicNumber.length).equals(pdfMagicNumber)) {
         return { success: false, message: "Invalid file type. Only PDF files are allowed." };
+    }
+
+     // Optional: Add size validation (example: 5MB limit)
+    if (fileData.length > 5 * 1024 * 1024) {
+        return { success: false, message: "File size exceeds 5MB limit." };
     }
 
     try {

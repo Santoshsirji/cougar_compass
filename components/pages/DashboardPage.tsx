@@ -1,14 +1,10 @@
 'use client';
 
-import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Bell } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-/* ------------------------
-| Dashboard Button Component |
-------------------------- */
+
 interface DashboardButtonProps {
   href?: string;
   externalLink?: string;
@@ -43,14 +39,8 @@ function DashboardButton({ href, externalLink, icon, title, description }: Dashb
   );
 }
 
-/* -------------------
-| Dashboard Page Main |
--------------------- */
+
 export default function DashboardPage() {
-  const [activeItem, setActiveItem] = useState('Academia');
-
-  const navItems = ['Academia', 'College Life', 'Career', 'Profile'];
-
   const dashboardResources: DashboardButtonProps[] = [
     {
       href: '/dashboard/course_suggestions',

@@ -7,31 +7,36 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { revalidatePath } from "next/cache";
 
 export async function deleteNotification(notificationId: string): Promise<{ success: boolean; message: string }> {
-    try {
-        const session = await getServerSession(authOptions);
-        if (!session?.user?.id || session.user.role !== Role.ADMIN) {
-            return { success: false, message: "Unauthorized: Admin access required." };
-        }
+    const session = await getServerSession(authOptions);
 
-        if (!notificationId) {
-            return { success: false, message: "Notification ID is required." };
+    if (!session || !session.user || session.user.role !== Role.ADMIN) {
+        return { success: false, message: "Unauthorized" };
+    }
+
+    try {
+        const existingNotification = await db.notification.findUnique({
+            where: { id: notificationId },
+        });
+
+        if (!existingNotification) {
+            // return { success: true, message: "Notification already deleted." }; // Option 1: Idempotent
+            return { success: false, message: "Notification not found." };    // Option 2: Strict
         }
 
         await db.notification.delete({
             where: { id: notificationId },
         });
 
-        revalidatePath('/admin/notifications'); // Revalidate path to reflect deletion
-        revalidatePath('/dashboard'); // Also revalidate dashboard
+        revalidatePath('/admin/notifications'); // Revalidate admin page
+        // Optionally revalidate other pages if notifications are shown elsewhere
 
-        return { success: true, message: "Notification deleted successfully!" };
-
-    } catch (error) {
+        return { success: true, message: "Notification deleted successfully." };
+    } catch (error: unknown) { // Use unknown
         console.error("Error deleting notification:", error);
-        // Handle cases where the notification might not be found (e.g., PrismaClientKnownRequestError P2025)
-        if ((error as any)?.code === 'P2025') {
-             return { success: false, message: "Notification not found." };
+        let message = "Failed to delete notification.";
+        if (error instanceof Error) {
+            message = error.message;
         }
-        return { success: false, message: "Failed to delete notification." };
+        return { success: false, message };
     }
 } 

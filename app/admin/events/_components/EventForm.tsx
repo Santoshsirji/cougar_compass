@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useTransition, useEffect } from 'react';
+import { useTransition, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+import * as z from 'zod';
 import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
 
@@ -31,9 +31,17 @@ const eventFormSchema = z.object({
 
 type EventFormValues = z.infer<typeof eventFormSchema>;
 
+// Define a more specific type for the server action result
+type ServerActionResult = {
+    success: boolean;
+    message: string;
+    // Use Zod's flattened error type if that's what the action returns
+    errors?: z.inferFlattenedErrors<typeof eventFormSchema>['fieldErrors'];
+};
+
 interface EventFormProps {
     initialData?: EventWithCreator | null; // Event data for editing
-    onSubmitAction: (data: EventFormValues) => Promise<{ success: boolean; message: string; errors?: any }>; // Server action (create or update)
+    onSubmitAction: (data: EventFormValues) => Promise<ServerActionResult>; // Server action (create or update)
     formTitle: string;
     formDescription: string;
     submitButtonText: string;
@@ -84,28 +92,33 @@ export function EventForm({
     const onSubmit = (values: EventFormValues) => {
         startTransition(async () => {
             try {
+                // No need to check initialData here if onSubmitAction handles both create/update
                 const result = await onSubmitAction(values);
 
                 if (result.success) {
                     toast({ title: "Success", description: result.message });
-                    router.push('/admin/events'); // Redirect back to the list on success
-                    router.refresh(); // Optional: Force refresh if needed, revalidatePath should handle cache
+                    router.push('/admin/events');
+                    router.refresh();
                 } else {
-                    // Handle server-side validation errors (if any)
-                    if (result.errors) {
-                        // Example: Displaying errors (adjust based on actual error structure)
-                        Object.keys(result.errors).forEach((key) => {
-                             const field = key as keyof EventFormValues;
-                             form.setError(field, { type: 'server', message: result.errors[field]?.join(', ') });
-                        });
-                         toast({ title: "Validation Error", description: result.message || "Please check the form fields.", variant: "destructive" });
-                    } else {
-                         toast({ title: "Error", description: result.message || "An unexpected error occurred.", variant: "destructive" });
-                    }
+                    // Handle potential Zod flattened errors
+                    const errorMessages = result.errors 
+                        ? Object.entries(result.errors)
+                            .map(([field, messages]) => `${field}: ${messages?.join(', ')}`)
+                            .join('\n')
+                        : result.message;
+                    toast({ 
+                        title: "Error", 
+                        description: errorMessages || "Failed to save event.", 
+                        variant: "destructive" 
+                    });
                 }
-            } catch (error) {
-                 console.error("Form submission error:", error);
-                 toast({ title: "Error", description: "An unexpected error occurred during submission.", variant: "destructive" });
+            } catch (error: unknown) {
+                console.error("Error saving event:", error);
+                let message = "An unexpected error occurred.";
+                if (error instanceof Error) {
+                    message = error.message;
+                }
+                toast({ title: "Error", description: message, variant: "destructive" });
             }
         });
     };

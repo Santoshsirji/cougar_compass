@@ -6,7 +6,7 @@ import Image from 'next/image'; // Use Next.js Image for optimization
 import { useSession, signOut } from 'next-auth/react'; // Hook to get session data and signOut
 import { getNotifications } from '@/app/actions/getNotifications'; // Import the action
 import type { Notification } from '@prisma/client'; // Import the Notification type
-import { Loader2, LogOut, User, Bell } from 'lucide-react'; // Keep existing icons if used, add Bell
+import { Loader2, LogOut, User } from 'lucide-react'; // Keep existing icons if used, add Bell
 import { IoNotificationsOutline } from "react-icons/io5"; // Import react-icon
 import { formatDistanceToNow } from 'date-fns'; // For relative time
 import {

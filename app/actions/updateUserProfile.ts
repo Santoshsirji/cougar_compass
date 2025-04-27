@@ -4,7 +4,7 @@ import { z } from "zod";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { db } from "@/lib/db";
-import { Prisma, ClassStanding, CourseStatus, DayOfWeek } from "@prisma/client";
+import { ClassStanding, CourseStatus, DayOfWeek } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 
 // Define nested schemas for complex array types
@@ -121,8 +121,12 @@ export async function updateUserProfile(data: UpdateProfileInput): Promise<{ suc
 
     return { success: true, message: "Profile updated successfully!" };
 
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Error updating user profile:", error);
-    return { success: false, message: "Failed to update profile." };
+    let message = "Failed to update profile.";
+    if (error instanceof Error) {
+        message = error.message;
+    }
+    return { success: false, message };
   }
 } 

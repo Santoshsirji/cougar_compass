@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import Head from 'next/head'; // Import Head for FontAwesome link
 
 export default function CollegeLifePage() {
@@ -12,34 +12,50 @@ export default function CollegeLifePage() {
                  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
             </Head>
 
-
-            <div className="main-content">
-                <div className="cooper">
-                    <img src="/images/stalls.png" alt="Campus Life" className="veksler" />
+            {/* College Life Content */}
+            <section className="py-16 px-4">
+              <div className="container mx-auto">
+                <div className="grid md:grid-cols-2 gap-12 items-center">
+                  <div>
+                    <h2 className="text-3xl font-bold mb-4">Vibrant Campus Life</h2>
+                    <p className="text-lg text-gray-700 mb-6">Experience a rich and diverse campus life with numerous clubs, organizations, and activities.</p>
+                    <Link href="/events">
+                      <span className="inline-block bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition">View Campus Events</span>
+                    </Link>
+                  </div>
+                  <div>
+                    <Image src="/images/campus-life.jpg" alt="Students socializing" width={500} height={350} className="rounded-lg shadow-lg w-full h-auto" />
+                  </div>
                 </div>
+              </div>
+            </section>
 
-                <div className="text-content">
-                    <div className="collegelife-title">For a Holistic College Experience!</div>
-                    
-                    <div className="life-buttons">
-                        <Link href="/events" className="life-btn">
-                            <i className="fas fa-calendar-alt"></i>
-                            Events
-                            <span className="life-description">Get Involved on Campus</span>
-                        </Link>
-                        
-                        <Link href="/shuttle" className="life-btn">
-                            <i className="fas fa-bus"></i> {/* Changed icon */} 
-                            Cougar Express
-                            <span className="life-description">Plan your ride</span>
-                        </Link>
-                    </div>
+            {/* Activities Section */}
+            <section className="bg-gray-100 py-16 px-4">
+              <div className="container mx-auto text-center">
+                <h2 className="text-3xl font-bold mb-8">Get Involved</h2>
+                <div className="grid md:grid-cols-3 gap-8">
+                  {/* Card 1: Clubs */}
+                  <div className="bg-white p-6 rounded-lg shadow-md">
+                    <Image src="/images/clubs.jpg" alt="Student clubs" width={300} height={200} className="w-full h-40 object-cover rounded mb-4" />
+                    <h3 className="text-xl font-semibold mb-2">Student Clubs</h3>
+                    <p className="text-gray-600">Join clubs based on your interests, from academic to recreational.</p>
+                  </div>
+                  {/* Card 2: Sports */}
+                  <div className="bg-white p-6 rounded-lg shadow-md">
+                     <Image src="/images/sports.jpg" alt="Campus sports" width={300} height={200} className="w-full h-40 object-cover rounded mb-4" />
+                    <h3 className="text-xl font-semibold mb-2">Athletics & Recreation</h3>
+                    <p className="text-gray-600">Participate in intramural sports or cheer on our varsity teams.</p>
+                  </div>
+                  {/* Card 3: Volunteering */}
+                  <div className="bg-white p-6 rounded-lg shadow-md">
+                     <Image src="/images/volunteering.jpg" alt="Volunteering" width={300} height={200} className="w-full h-40 object-cover rounded mb-4" />
+                    <h3 className="text-xl font-semibold mb-2">Community Service</h3>
+                    <p className="text-gray-600">Make a difference through various volunteering opportunities.</p>
+                  </div>
                 </div>
-            </div>
-
-            <div className="ticker">
-                <div className="text">Upcoming Event: Movie Night on the Green this Friday! || Shuttle running on weekend schedule || Check out the new club fair next week...</div>
-            </div>
+              </div>
+            </section>
 
             <style jsx>{`
                 /* Reuse relevant styles from academia, adapt as needed */

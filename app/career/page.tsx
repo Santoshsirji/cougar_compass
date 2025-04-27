@@ -3,6 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import Head from 'next/head'; // Import Head for FontAwesome link
+import Image from 'next/image';
 
 export default function CareerPage() {
     
@@ -14,8 +15,7 @@ export default function CareerPage() {
 
             <div className="main-content">
                 <div className="image-container">
-
-                    <img src="/images/career_image.png" alt="Professional Setting" className="side-image" />
+                    <Image src="/images/career_image.png" alt="Professional Setting" className="side-image" width={500} height={500} />
                 </div>
 
                 <div className="text-content">
@@ -53,6 +53,33 @@ export default function CareerPage() {
                 </div>
             </div>
 
+            {/* Career Content */}
+            <section className="bg-gray-100 py-16 px-4">
+              <div className="container mx-auto text-center">
+                <h2 className="text-3xl font-bold mb-4">Career Services</h2>
+                <p className="text-lg text-gray-700 mb-8">Explore career opportunities and resources available to students.</p>
+                <div className="grid md:grid-cols-3 gap-8">
+                  {/* Card 1: Job Listings */}
+                  <div className="bg-white p-6 rounded-lg shadow-md">
+                     <Image src="/images/job-listings.jpg" alt="Job Listings" width={300} height={200} className="w-full h-40 object-cover rounded mb-4" />
+                    <h3 className="text-xl font-semibold mb-2">Job Listings</h3>
+                    <p className="text-gray-600">Access exclusive job postings for students and alumni.</p>
+                  </div>
+                  {/* Card 2: Resume Workshops */}
+                  <div className="bg-white p-6 rounded-lg shadow-md">
+                     <Image src="/images/resume-workshop.jpg" alt="Resume Workshops" width={300} height={200} className="w-full h-40 object-cover rounded mb-4" />
+                    <h3 className="text-xl font-semibold mb-2">Resume Workshops</h3>
+                    <p className="text-gray-600">Get help crafting the perfect resume and cover letter.</p>
+                  </div>
+                  {/* Card 3: Career Fairs */}
+                  <div className="bg-white p-6 rounded-lg shadow-md">
+                     <Image src="/images/career-fair.jpg" alt="Career Fairs" width={300} height={200} className="w-full h-40 object-cover rounded mb-4" />
+                    <h3 className="text-xl font-semibold mb-2">Career Fairs</h3>
+                    <p className="text-gray-600">Connect with potential employers at our campus career fairs.</p>
+                  </div>
+                </div>
+              </div>
+            </section>
 
             <style jsx>{`
                 /* Base styles */

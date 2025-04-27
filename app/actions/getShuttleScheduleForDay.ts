@@ -1,7 +1,7 @@
 'use server';
 
 // Global imports
-import { DayOfWeek, Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 
 // Local imports
 import { db } from "@/lib/db";
